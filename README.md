@@ -18,13 +18,13 @@ The project involves the following key steps:
    - Removing unnecessary columns.
    - Handling missing values.
    - Renaming columns for clarity.
-   - Filtering out specific data points.
+   - Filtering out specific data points. Specifically, working with p=1atm and $\phi$=0.5
 3. **Data Analysis:** Exploring the dataset to understand its structure and characteristics.
 4. **Modeling Approach:**
-   - Utilizing TensorFlow and Keras for building neural network models.
+   - Utilizing TensorFlow and Keras to build neural network models.
    - Implementing multiple activation functions, BatchNormalization, Dropout layers, and weight decay with the Adam optimizer.
    - Training models with various configurations to evaluate performance.
-5. **Results Visualization:** Plotting actual vs. predicted ignition times and analyzing model performance metrics.
+5. **Results Visualization:** Plotting actual and predicted ignition times vs Temperature and analyzing model performance metrics.
 
 ## Results so far
 As of now, we have the following results:
