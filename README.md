@@ -13,18 +13,42 @@ This repository contains the files and code used in my B.Tech project focused on
 
 The project involves the following key steps:
 
-1. **Data Uploading and Importing:** Uploading the dataset to Google Colab and importing necessary libraries.
-2. **Data Cleaning:**
-   - Removing unnecessary columns.
-   - Handling missing values.
-   - Renaming columns for clarity.
-   - Filtering out specific data points. Specifically, working with p=1atm and $\phi$=0.5
-3. **Data Analysis:** Exploring the dataset to understand its structure and characteristics.
+1. **Data Uploading and Importing:**
+   - Uploading the dataset to Google Colab and importing necessary libraries.
+
+2. **Data Cleaning and Preparation:**
+   - **Earlier Approach:**
+     - Encountered a high population of zeros in the Ignition Delay Time (IDT) dataset.
+     - Attempted to develop correlations while ignoring other relevant features.
+     - Treated pressure (p) and equivalence ratio (φ) as constants, reducing the problem to a single-variable function \( f(x, T) \).
+   - **Revised Approach:**
+     - Utilized a larger dataset and removed entries with zero IDT values.
+     - Applied a logarithmic transformation to the IDT values to normalize the data.
+     - Enhanced data cleaning by addressing sources of error related to the initial data imbalance and feature omission.
+
+3. **Feature Engineering:**
+   - Added features such as Dropout and BatchNormalization layers to improve model generalization.
+   - Implemented learning rate scheduling and early stopping to optimize training efficiency.
+   - Incorporated weight decay to prevent overfitting.
+
 4. **Modeling Approach:**
-   - Utilizing TensorFlow and Keras to build neural network models.
-   - Implementing multiple activation functions, BatchNormalization, Dropout layers, and weight decay with the Adam optimizer.
-   - Training models with various configurations to evaluate performance.
-5. **Results Visualization:** Plotting actual and predicted ignition times vs Temperature and analyzing model performance metrics.
+   - Utilized TensorFlow and Keras to build and train neural network models.
+   - Implemented multiple activation functions, including ReLU, Leaky ReLU, ELU, SELU, Softplus, Swish, and GELU.
+   - Conducted hyperparameter tuning encompassing:
+     - **Solvers:** Adam, RMSprop, SGD.
+     - **Activation Functions:** Exploring various nonlinearities to enhance model performance.
+     - **Number of Epochs:** Determining the optimal training duration.
+     - **Batch Size:** Balancing computational efficiency and model accuracy.
+     - **Number of Hidden Layers:** Structuring the network depth for optimal learning.
+     - **Number of Neurons per Layer:** Adjusting capacity to capture complex patterns.
+   - Explored various configurations to evaluate model performance and identify optimal settings.
+
+5. **Results Visualization:**
+   - Plotted actual vs. predicted ignition times against temperature.
+   - Analyzed model performance metrics, including Mean Squared Error (MSE), Root Mean Squared Error (RMSE), validation loss, and R² scores.
+   - Highlighted significant findings and performance improvements achieved through methodological enhancements.
+
+This comprehensive methodology ensures a robust and accurate modeling of ignition time data, addressing initial shortcomings and leveraging advanced machine learning techniques to yield reliable results.
 
 ## Results so far
 As of now, we have the following results:
