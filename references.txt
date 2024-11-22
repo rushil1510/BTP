@@ -1,0 +1,4 @@
+https://shaoanlu.wordpress.com/2017/05/29/sgd-all-which-one-is-the-best-optimizer-dogs-vs-cats-toy-experiment/
+https://arxiv.org/abs/1705.08292
+https://github.com/shaoanlu/dogs-vs-cats-redux/blob/master/opt_experiment.ipynb
+https://datascience.stackexchange.com/questions/30344/why-not-always-use-the-adam-optimization-technique
