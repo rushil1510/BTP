@@ -9,7 +9,16 @@
 \usepackage{caption}
 \usepackage{float}
 \usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+
+\newcommand{\var}[1]{\textcolor{blue}{\texttt{#1}}} % Command for variables
+\newcommand{\kw}[1]{\textcolor{purple}{\texttt{#1}}} % Command for keywords
+
+
 \setlength{\parindent}{0pt}
+
 
 \begin{document}
 
@@ -50,7 +59,7 @@
     {\Large INDIAN INSTITUTE OF TECHNOLOGY DELHI}\par
     \vspace{0.25cm}
     {\Large NEW DELHI – 110016}\par
-    {\Large November 2024}\par
+    {\Large September 2024}\par
 
 \end{titlepage}
 
@@ -65,7 +74,7 @@ I hereby declare that the work presented here in the report/thesis has been carr
 
 Rushil Mital \hfill 2021ES10184 \\
 8095223457 \hfill Rushil.Mital.es121@dese.iitd.ac.in \\
-Place: Delhi \hfill Date: 14th November 2024
+Place: Delhi \hfill Date: 25th November 2024
 
 \newpage
 
@@ -83,7 +92,7 @@ Indian Institute of Technology Delhi
 \end{flushright}
 
 Place: New Delhi \\
-Date: November 2024\\
+Date: 25th November 2024\\
 
 
 
@@ -125,11 +134,10 @@ A dataset of ignition delay times (IDTs) was generated automatically using a rec
 % Chapter Structure (Template)
 
 \chapter{Literature Review}
-The combustion characteristics of hydrogen, syngas, and hydrocarbon-based fuels have garnered significant attention in recent years, driven by the need to reduce carbon emissions and optimize energy production in power generation systems. As hydrogen and syngas emerge as viable alternatives to traditional fossil fuels, understanding their combustion properties—such as ignition delay times, flame speeds, and the influence of different fuel blends—becomes crucial for the safe and efficient operation of internal combustion engines and gas turbines. However, the high reactivity of these fuels, especially hydrogen, presents unique challenges that necessitate the development of advanced predictive models.
+The combustion characteristics of hydrogen, syngas, and hydrocarbon-based fuels have garnered significant attention in recent years, driven by the need to reduce carbon emissions and optimize energy production in power generation systems. As hydrogen and syngas emerge as viable alternatives to traditional fossil fuels, understanding their combustion properties—such as ignition delay times, flame speeds, and the influence of different fuel blends—becomes crucial for the safe and efficient operation of internal combustion engines and gas turbines. However, the high reactivity of these fuels, especially hydrogen, presents unique challenges that necessitate the develþopment of advanced predictive models.
 
-Recent research efforts have focused on experimental studies, detailed chemical kinetic modeling, and the integration of machine learning (ML) and artificial intelligence (AI) techniques to better predict combustion behaviors under a wide range of operating conditions. The following literature review synthesizes findings from key studies that explore hydrogen and syngas oxidation, C1-C2 hydrocarbons combustion, and the development of AI-driven models for predicting auto-ignition delay times.
+Recent research efforts have focused on experimental studies, detailed chemical kinetic modeling, and the integration of machine learning (ML) and artificial intelligence (AI) techniques to better predict combustion behaviors under a wide range of operating conditions. The following literature review synthesizes findings from studies that explore hydrogen and syngas oxidation, C1-C2 hydrocarbons combustion, and the development of AI-driven models for predicting auto-ignition delay times.
 
-This review begins with an exploration of the combustion properties of hydrogen and syngas, focusing on their behavior at elevated pressures and temperatures, as examined in detailed experimental and kinetic modeling studies. It then moves on to research concerning small hydrocarbons (C1-C2) and their oxidation mechanisms, providing insights into how hierarchical kinetic models can be applied to more complex combustion systems. Finally, the review delves into the role of AI and machine learning in combustion modeling, with a particular focus on the use of neural networks and other algorithms to predict combustion properties such as ignition delay, addressing both their potential and current limitations.
 
 \section{Combustion and Flame}
 
@@ -233,19 +241,22 @@ The application of AI models in predicting combustion properties such as ignitio
 
 \chapter{Methodology}
 
-Our approach involves understanding existing work in the field, setting up a simple dataset for methane (CH\(_4\)), and experimenting with different models to predict IDT as a function of equivalence ratio (\(\phi\)), pressure (\textit{p}), and temperature (\textit{T}).
+Our approach involves understanding existing work in the field, setting up a simple dataset for methane (CH\(_4\)), and experimenting with different machine learning models to predict IDT as a function of equivalence ratio (\(\phi\)), pressure (\textit{p}), and temperature (\textit{T}).
 
-\section{Understanding the Reaction Mechanism Generator (RMG) Code}
+\section{Understanding Earlier Approaches}
+\subsection{Reaction Mechanism Generator Code by MIT}
 
-Initially, we explored the Reaction Mechanism Generator (RMG) developed by MIT, available at \url{https://github.com/ReactionMechanismGenerator}. RMG is a powerful tool used to automatically generate reaction mechanisms for combustion and chemical kinetics. We attempted to understand how the underlying code worked, recognizing that the project leverages a number of advanced libraries, making the code quite complex.
+Initially, we explored the Reaction Mechanism Generator (RMG) developed by MIT, available at \url{https://github.com/ReactionMechanismGenerator}.
+\newline
+RMG is a powerful tool used to automatically generate reaction mechanisms for combustion and chemical kinetics. We attempted to understand how the underlying code worked, recognizing that the project leverages a number of advanced libraries, making the code quite complex.
 
 The code's complexity stems from its use of numerous libraries to handle chemical reactions, kinetics, and mechanism generation. Despite investing time in trying to understand the workings of RMG, we concluded that the intricate dependencies and abstractions in the code make it difficult to modify or apply directly to our specific use case without deeper knowledge of chemical kinetics and Python programming.
 
-\section{Exploring Ignition Model Code}
+\subsection{Exploring Ignition Model Code}
 
-Next, we examined another open-source project focused on ignition modeling, available at \url{https://github.com/Shimaa/Ignition_Model/tree/master}. This project also involved machine learning, particularly using the `scikit-learn` (sklearn) library, to predict ignition delay times. By studying the structure of this code, we observed that the model parameters seemed somewhat arbitrary. The selection of features and model hyperparameters lacked a structured approach, which further motivated us to adopt a more systematic method in our own project.
+Next, I examined another open-source project focused on ignition modeling, available at \url{https://github.com/Shimaa/Ignition_Model/tree/master}. This project also involved machine learning, particularly using the `scikit-learn` (sklearn) library, to predict ignition delay times. By studying the structure of this code, we observed that the model parameters seemed somewhat arbitrary. The selection of features and model hyperparameters lacked a structured approach, which further motivated us to adopt a more systematic method in our own project.
 
-\section{Starting Simple with CH\(_4\) Dataset}
+\section{Simple CH\(_4\) Dataset}
 
 To simplify the problem, we decided to focus on methane (CH\(_4\)) as a test case. We collected a dataset containing 100–150 entries of experimental data for methane combustion, with IDT values recorded as a function of equivalence ratio (\(\phi\)), pressure (\textit{p}), and temperature (\textit{T}). This choice allowed us to reduce complexity and focus on refining our approach to model selection and training.
 
@@ -256,7 +267,7 @@ The goal was to predict the ignition delay time (IDT) based on these three input
     \item \textit{T} (Temperature in Kelvin)
 \end{itemize}
 
-\section{Model Selection and Evaluation}
+\subsection{Model Selection and Evaluation}
 
 We explored several machine learning models to identify which model provided the best fit for predicting IDT. The models we experimented with include:
 \begin{itemize}
@@ -275,7 +286,7 @@ We explored several machine learning models to identify which model provided the
 
 Each of these models was trained and tested using the methane dataset, and their performance was evaluated based on metrics such as mean absolute error (MAE), mean squared error (MSE), and R-squared (\(R^2\)) values. We used cross-validation to ensure that the model generalizes well to unseen data.
 
-\section{Choice of Models}
+\subsection{Choice of Models}
 
 The selection of these models was driven by their complementary strengths:
 \begin{itemize}
@@ -286,7 +297,7 @@ The selection of these models was driven by their complementary strengths:
     \item \textbf{Random Forest} reduces overfitting by combining multiple decision trees, making it more robust for this regression task.
     \item \textbf{SVR} is useful for regression tasks in high-dimensional spaces, helping to capture relationships in the data that other models might miss.
 \end{itemize}
-\section{Dataset Sources}
+\subsection{Dataset Sources}
 
 The initial datasets used for training our models were accessed from two publicly available sources. These datasets were essential in developing and validating the AI models for predicting auto-ignition delay times.
 
@@ -294,12 +305,101 @@ The first dataset, which details various ignition delay times and relevant param
 
 The second dataset supplements the first by providing additional fuel composition data and operating conditions for different mixtures. This can be accessed at the following link: \href{https://docs.google.com/spreadsheets/d/1ycSi_3ev-iRUcElNEmSm_K87B3LwD7vZ/edit?usp=sharing&ouid=110942553828710394435&rtpof=true&sd=true}{Dataset2}.
 
-Both datasets were critical in establishing the baseline for the predictive models and were used throughout the training and testing phases.
+\section{Simplifications to our Earlier Methodology}
+
+The earlier approach to modeling ignition delay time (IDT) was identified as flawed due to multiple reasons. Primarily, we aimed to construct a function of equivalence ratio $\phi$, pressure $p$, and temperature $T$ without an adequately sized dataset to support such a comprehensive analysis. To address these limitations, we revised our methodology and refined the target objective.
+
+\subsection{Revised Objective}
+
+Consider a fuel mixture comprising $n$ fuels with fractions $x_1, x_2, x_3, \ldots, x_n$, such that $\sum_{i=1}^n x_i = 1$, at a specified pressure $p_{\text{fuel}}$ and equivalence ratio $\phi_{\text{fuel}}$, ignited over a temperature series $\mathbf{T}_{\text{fuel}} = \{T_1, T_2, T_3, \ldots, T_m\}$. The task is to predict IDT over this temperature series. The revised objective is to minimize a loss function, such as the mean squared error (MSE), and/or alternatively maximize $R^2$, the correlation coefficient, defined as:
+
+\[
+\text{MSE} = \frac{1}{N} \sum_{i=1}^N (y_i - \hat{y}_i)^2,
+\]
+
+\[
+R^2 = 1 - \frac{\sum_{i=1}^N (y_i - \hat{y}_i)^2}{\sum_{i=1}^N (y_i - \bar{y})^2},
+\]
+
+where $y_i$ are the observed values, $\hat{y}_i$ are the predicted values, $\bar{y}$ is the mean of observed values, and $N$ is the total number of data points.
+
+For simplicity and due to its widespread use, we chose MSE as the loss function. However, it is worth noting that a more suitable loss function may yield better predictive performance.
+
+\subsection{Main Methodology}
+
+The key steps in the revised methodology are as follows:
+\begin{enumerate}
+    \item \textbf{Fixed Conditions:} 
+    \newline
+    Set $p$ and $\phi$ to constant values to first identify a model that fits the data for a specific condition effectively.
+    \item \textbf{Reduced Fuel Mixture:} 
+    \newline
+    Limit the study to $n=2$, using only CH$_4$ and C$_3$H$_8$. This simplification reduced training time and minimized input parameters to the neural network. The study can be extended to a larger number of fuels as a more extensive dataset becomes available for tuples of the form $(x_1, x_2, \ldots, x_n)$.
+    \item \textbf{Training and Validation:} 
+    \newline 
+    From a set of $n$ entries of the form $(x_i, 1-x_i)$, train the model on $n-1$ entries and validate its performance on the $n$th entry. For example, consider $x_1 = \{0, 0.2, 0.4, 0.6, 0.8, 1\}$. Since $x_2 = 1 - x_1$, the second variable is inherently determined.
+    \item  \textbf{Dataset Cleaning:}
+    \newline
+    We also excluded data points with zero values in IDT as they skewed the model downward significantly i.e the training data was populated with a large number of entries which are irrelevant to us
+\end{enumerate}
+
+\subsection{Model Training}
+
+The model was trained using various combinations of optimizers and activation functions, as the exact governing equation remains uncertain. The following activations and optimizers were considered during the study:
+\[
+\text{Activations: } \{\text{ReLU, Leaky ReLU, ELU, SELU, Softplus, Swish, GELU}\}.
+\]
+
+\[
+\text{Optimizers: } \{\text{Adam, RMSprop, SGD}\}.
+\]
+
+To simplify the problem, $\log(\text{IDT})$ was used as the target variable, as this is a conventional practice and often linearizes the problem. This transformation helped improve the interpretability of the results and facilitated the identification of suitable model configurations.
 
 
-By trying out multiple models, we aimed to find the most accurate and computationally efficient method for predicting ignition delay times based on the experimental dataset for methane.
 
- 
+\subsection{Hyperparameter Tuning}
+
+Hyperparameter tuning was conducted manually, complemented by a grid search over optimizers. Other hyperparameters such as batch normalization, minimum learning rate, patience, number of epochs, batch size, number of layers, and neurons per layer were not exhaustively explored, as doing so would significantly increase the complexity of the study. While an exhaustive grid search could improve performance, it would also complicate deriving clear correlations from the results.
+
+\subsection{Summary}
+
+This revised methodology provides a simplified yet effective approach to predicting IDT while acknowledging the limitations of the available dataset. Future work will aim to expand the dataset and explore alternative loss functions and hyperparameter configurations. We can summarise our methodology by going through the following algorithm
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{Trained models and evaluation metrics}
+
+ \SetKwFunction{FMain}{process}
+ \SetKwProg{Fn}{Function}{:}{}
+ \Fn{\FMain{df, x\_value, activation, optimizer}}{
+    Filter data where \( x \neq \text{x\_value} \)\;
+    Select 70\% of data where \( x = \text{x\_value} \)\;
+    Concatenate into \texttt{train} dataset and remainder as \texttt{test} dataset\;
+    Remove entries where \texttt{idt} is zero in both \texttt{train} and \texttt{test} sets\;
+    Apply logarithmic transformation to idt\;
+    Define model with batch normalization and dropout\;
+    Choose \texttt{optimizer} based on grid search\;
+    \texttt{model\_tf.compile(optimizer=optimizer, loss='mse')}\;
+    Set callbacks for learning rate scheduling and early stopping\;
+    Train model with a larger batch size for better performance\;
+    Predict \texttt{idt} values for the \texttt{test} set\;
+    Calculate \texttt{MSE}, \texttt{RMSE}, \texttt{R2} and store/plot them\;
+ }
+
+ \For{\( \text{x\_value} \) in \texttt{x\_values\_to\_process}}{
+    \For{\( \text{activation} \) in \texttt{activation\_functions}}{
+        \For{\( \text{optimizer} \) in \texttt{optimizers}}{
+            \FMain{df, x\_value, activation, optimizer}\;
+        }
+    }
+ }
+
+ \caption{Data Processing and Model Training Pipeline}
+\end{algorithm}
+
+
+
 
 % Content goes here
 
