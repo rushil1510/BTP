@@ -8,10 +8,12 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{float}
+\usepackage{subcaption}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{mhchem}
 
 \newcommand{\var}[1]{\textcolor{blue}{\texttt{#1}}} % Command for variables
 \newcommand{\kw}[1]{\textcolor{purple}{\texttt{#1}}} % Command for keywords
@@ -30,7 +32,7 @@
     {\Huge \textbf{Prediction of Ignition Delay Time Characteristics of Natural Gas Mixture Using Machine Learning Models}\par}
     \vspace{1cm} % Optional space between sections
     
-    {\Large B.Tech. project report submitted in partial fulfilment of the requirements for the award of}\par
+    {\Large B.Tech. project report submitted in partial fulfillment of the requirements for the award of}\par
     
     {\Large Bachelor of Technology in Energy Engineering}\par
     
@@ -59,7 +61,7 @@
     {\Large INDIAN INSTITUTE OF TECHNOLOGY DELHI}\par
     \vspace{0.25cm}
     {\Large NEW DELHI – 110016}\par
-    {\Large September 2024}\par
+    {\Large November 2024}\par
 
 \end{titlepage}
 
@@ -134,7 +136,7 @@ A dataset of ignition delay times (IDTs) was generated automatically using a rec
 % Chapter Structure (Template)
 
 \chapter{Literature Review}
-The combustion characteristics of hydrogen, syngas, and hydrocarbon-based fuels have garnered significant attention in recent years, driven by the need to reduce carbon emissions and optimize energy production in power generation systems. As hydrogen and syngas emerge as viable alternatives to traditional fossil fuels, understanding their combustion properties—such as ignition delay times, flame speeds, and the influence of different fuel blends—becomes crucial for the safe and efficient operation of internal combustion engines and gas turbines. However, the high reactivity of these fuels, especially hydrogen, presents unique challenges that necessitate the develþopment of advanced predictive models.
+The combustion characteristics of hydrogen, syngas, and hydrocarbon-based fuels have garnered significant attention in recent years, driven by the need to reduce carbon emissions and optimize energy production in power generation systems. As hydrogen and syngas emerge as viable alternatives to traditional fossil fuels, understanding their combustion properties—such as ignition delay times, flame speeds, and the influence of different fuel blends—becomes crucial for the safe and efficient operation of internal combustion engines and gas turbines. However, the high reactivity of these fuels, especially hydrogen, presents unique challenges that necessitate the development of advanced predictive models.
 
 Recent research efforts have focused on experimental studies, detailed chemical kinetic modeling, and the integration of machine learning (ML) and artificial intelligence (AI) techniques to better predict combustion behaviors under a wide range of operating conditions. The following literature review synthesizes findings from studies that explore hydrogen and syngas oxidation, C1-C2 hydrocarbons combustion, and the development of AI-driven models for predicting auto-ignition delay times.
 
@@ -260,7 +262,7 @@ Next, I examined another open-source project focused on ignition modeling, avail
 
 To simplify the problem, we decided to focus on methane (CH\(_4\)) as a test case. We collected a dataset containing 100–150 entries of experimental data for methane combustion, with IDT values recorded as a function of equivalence ratio (\(\phi\)), pressure (\textit{p}), and temperature (\textit{T}). This choice allowed us to reduce complexity and focus on refining our approach to model selection and training.
 
-The goal was to predict the ignition delay time (IDT) based on these three input parameters: 
+The initial goal was to predict the ignition delay time (IDT) based on these three input parameters: 
 \begin{itemize}
     \item \(\phi\) (Equivalence ratio)
     \item \textit{p} (Pressure in atm)
@@ -305,9 +307,9 @@ The first dataset, which details various ignition delay times and relevant param
 
 The second dataset supplements the first by providing additional fuel composition data and operating conditions for different mixtures. This can be accessed at the following link: \href{https://docs.google.com/spreadsheets/d/1ycSi_3ev-iRUcElNEmSm_K87B3LwD7vZ/edit?usp=sharing&ouid=110942553828710394435&rtpof=true&sd=true}{Dataset2}.
 
-\section{Simplifications to our Earlier Methodology}
+\section{Simplifications to Earlier Methodology}
 
-The earlier approach to modeling ignition delay time (IDT) was identified as flawed due to multiple reasons. Primarily, we aimed to construct a function of equivalence ratio $\phi$, pressure $p$, and temperature $T$ without an adequately sized dataset to support such a comprehensive analysis. To address these limitations, we revised our methodology and refined the target objective.
+The earlier approach to modeling ignition delay time (IDT) was identified as flawed due to multiple reasons. Primarily, we aimed to construct a function of equivalence ratio $\phi$, pressure $p$, and temperature $T$ without an adequately sized dataset to support such a comprehensive analysis. To address these limitations, we revised our methodology and refined the target objective. We also limited our study to ANNs and focused on fine tuning rather than validation of different techniques.
 
 \subsection{Revised Objective}
 
@@ -356,15 +358,57 @@ The model was trained using various combinations of optimizers and activation fu
 
 To simplify the problem, $\log(\text{IDT})$ was used as the target variable, as this is a conventional practice and often linearizes the problem. This transformation helped improve the interpretability of the results and facilitated the identification of suitable model configurations.
 
+\begin{table}[H]
+\centering
+\caption{Activation Functions and Their Mathematical Descriptions}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Activation Function} & \textbf{Mathematical Description} \\
+\hline
+ReLU & $f(x) = \max(0, x)$ \\
+\hline
+Leaky ReLU & $f(x) = \begin{cases} 
+x & \text{if } x > 0 \\
+\alpha x & \text{if } x \leq 0 
+\end{cases}$ \\
+\hline
+ELU & $f(x) = \begin{cases} 
+x & \text{if } x > 0 \\
+\alpha (e^x - 1) & \text{if } x \leq 0 
+\end{cases}$ \\
+\hline
+SELU & $f(x) = \lambda \begin{cases} 
+x & \text{if } x > 0 \\
+\alpha (e^x - 1) & \text{if } x \leq 0 
+\end{cases}$ \\
+\hline
+Softplus & $f(x) = \log(1 + e^x)$ \\
+\hline
+Swish & $f(x) = x \cdot \sigma(x)^*$\\
+\hline
+GELU & $f(x) = x \cdot \Phi(x)^*$ \\
+\hline
+\end{tabular}
+\end{table}
+\footnotetext{$\sigma(x) = \frac{1}{1 + e^{-x}}$ }
+\footnotetext{$\Phi(x)$ is the cumulative distribution function (CDF) of the Gaussian distribution.}
 
 
 \subsection{Hyperparameter Tuning}
 
-Hyperparameter tuning was conducted manually, complemented by a grid search over optimizers. Other hyperparameters such as batch normalization, minimum learning rate, patience, number of epochs, batch size, number of layers, and neurons per layer were not exhaustively explored, as doing so would significantly increase the complexity of the study. While an exhaustive grid search could improve performance, it would also complicate deriving clear correlations from the results.
+Hyperparameter tuning was conducted manually, complemented by a grid search over optimizers and activations as discussed earlier. Other hyperparameters such as batch normalization, minimum learning rate, patience, number of epochs, batch size, number of layers, and neurons per layer were not exhaustively explored, as doing so would significantly increase the complexity of the study. While an exhaustive grid search could improve performance, it would also complicate deriving clear correlations from the results.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth, height=0.7\textheight, keepaspectratio]{ArchitectureOfNN.png}
+    \caption{Architecture of our Neural Network, dropout set to 0.2}
+\end{figure}
+
+
 
 \subsection{Summary}
 
-This revised methodology provides a simplified yet effective approach to predicting IDT while acknowledging the limitations of the available dataset. Future work will aim to expand the dataset and explore alternative loss functions and hyperparameter configurations. We can summarise our methodology by going through the following algorithm
+This methodology provides a simplified yet effective approach to predicting IDT while acknowledging the limitations of the available dataset.We can summarise our methodology by going through the following algorithm
 
 \begin{algorithm}[H]
 \SetAlgoLined
@@ -399,12 +443,11 @@ This revised methodology provides a simplified yet effective approach to predict
 \end{algorithm}
 
 
-
-
 % Content goes here
 
 \chapter{Results and Discussion}
-We present the plots generated from the different regression models we trained for predicting ignition delay time (IDT) using the specified hyperparameters. Each model was trained on a dataset containing key input features such as equivalence ratio (\(\phi\)), pressure \textit{(p)}, and temperature \textit{(T)}, and was evaluated using standard metrics like mean absolute error (MAE), mean squared error (MSE), and R-squared (\(R^2\)) to assess the model performance.
+\section{Earlier Results}
+Each model was trained on a dataset containing key input features such as equivalence ratio (\(\phi\)), pressure \textit{(p)}, and temperature \textit{(T)}, and was evaluated using standard metrics like mean absolute error (MAE), mean squared error (MSE), and R-squared (\(R^2\)) to assess the model performance.
 
 The selection of these models was made to capture a variety of learning techniques, from instance-based learning with KNN to ensemble methods like Random Forest and Gradient Boosting, and complex neural networks like MLP. Each model’s hyperparameters were carefully tuned to optimize performance and avoid overfitting.
 
@@ -412,12 +455,7 @@ In particular, special attention was given to the trade-off between bias and var
 
 The following sections include the respective plots and an analysis of possible sources of error based on the performance of each model.
 
-
-
-
-\section{K-Nearest Neighbors (KNN)}
-
-
+\subsection{K-Nearest Neighbors (KNN)}
 \textbf{Possible Sources of Errors:} 
 \begin{itemize}
     \item KNN is highly sensitive to the choice of the number of neighbors (n\_neighbors). A small value of \(n\) may lead to overfitting as the model becomes too specific to the training data, while a large value could result in underfitting, where important local patterns in the data are smoothed out.
@@ -425,7 +463,7 @@ The following sections include the respective plots and an analysis of possible 
     \item Additionally, KNN does not perform any internal learning; it is computationally expensive during prediction because it must compute distances for every new query, which can introduce inaccuracies if not properly scaled.
 \end{itemize}
 
-\section{Gradient Boosting}
+\subsection{Gradient Boosting}
 
 
 \textbf{Possible Sources of Errors:} 
@@ -435,7 +473,7 @@ The following sections include the respective plots and an analysis of possible 
     \item Additionally, Gradient Boosting models are sequential, meaning errors propagate from one tree to the next, which could amplify small errors if the earlier trees are not well-tuned.
 \end{itemize}
 
-\section{Multi-Layer Perceptron (MLP)}
+\subsection{Multi-Layer Perceptron (MLP)}
 
 
 \textbf{Possible Sources of Errors:} 
@@ -446,7 +484,7 @@ The following sections include the respective plots and an analysis of possible 
     \item The complexity of neural networks also means that overfitting is a major concern, especially if not enough regularization techniques, such as dropout or weight decay, are used.
 \end{itemize}
 
-\section{Decision Tree}
+\subsection{Decision Tree}
 
 \textbf{Possible Sources of Errors:} 
 \begin{itemize}
@@ -455,7 +493,7 @@ The following sections include the respective plots and an analysis of possible 
     \item Overfitting is also more likely when the tree is allowed to grow fully without pruning or regularization, which can lead to very complex decision boundaries that do not generalize well.
 \end{itemize}
 
-\section{Random Forest}
+\subsection{Random Forest}
 \textbf{Possible Sources of Errors:} 
 \begin{itemize}
     \item Random Forest models generally reduce overfitting compared to a single decision tree, but they can still suffer from overfitting if the individual trees are too deep or if not enough trees (n\_estimators) are used, which can result in high variance or high bias, respectively.
@@ -463,7 +501,7 @@ The following sections include the respective plots and an analysis of possible 
     \item Interpretability is also reduced compared to simpler models like decision trees, as it becomes difficult to understand the decision-making process due to the ensemble nature of the model.
 \end{itemize}
 
-\section{Support Vector Regression (SVR)}
+\subsection{Support Vector Regression (SVR)}
 \textbf{Possible Sources of Errors:} 
 \begin{itemize}
     \item The choice of the regularization parameter \(C\) and kernel function (in this case, the RBF kernel) has a significant impact on SVR performance. If \(C\) is too high, the model may overfit the data, while if \(C\) is too low, the model may fail to capture the underlying trends, leading to underfitting.
@@ -472,83 +510,198 @@ The following sections include the respective plots and an analysis of possible 
 \end{itemize}
 
 We can see from the plots pertaining to higher data-points, such as for $\phi$ = 0.5 and \textit{p} = 1 atm, the Gradient Boosting Regressor is able to perform quite well whereas Decision trees and MLP perform quite poorly. As a matter of fact, MLP has performed quite poorly through the entire experiment and this sparks a question about how the other researchers were able to get the best results using ANNs, a cousin of MLP.
-
-
-
-% Place the first image before this text
-% Place the first image before this text with smaller width
-
-
-% First image with reduced height
-
-
-% First image with reduced height
-
-
-% First image with reduced height
-
-% First two images in one figure
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth, height=0.7\textheight, keepaspectratio]{Plots_midterm_report/GradientBoostingRegressor_CH4_EqRatio0.5_Pressure1atm_plot.png}
-    \caption{Gradient Boosting: CH4, $\phi = 0.5$, $p = 1$ atm}
+    % First row
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{Plots_midterm_report/GradientBoostingRegressor_CH4_EqRatio0.5_Pressure1atm_plot.png}
+        \caption{Gradient Boosting: \ce{CH4}, $\phi = 0.5$, $p = 1$ atm}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{Plots_midterm_report/GradientBoostingRegressor_CH4_EqRatio0.5_Pressure10atm_plot.png}
+        \caption{Gradient Boosting: \ce{CH4}, $\phi = 0.5$, $p = 10$ atm}
+    \end{subfigure}
+
+    \vspace{0.5cm} % Add some vertical spacing between rows
+
+    % Second row
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{Plots_midterm_report/KNeighborsRegressor_CH4_EqRatio0.5_Pressure1atm_plot.png}
+        \caption{K Neighbors: \ce{CH4}, $\phi = 0.5$, $p = 1$ atm}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{Plots_midterm_report/KNeighborsRegressor_CH4_EqRatio0.5_Pressure10atm_plot.png}
+        \caption{K Neighbors: \ce{CH4}, $\phi = 0.5$, $p = 10$ atm}
+    \end{subfigure}
+
+    \caption{Comparisons of Gradient Boosting and K Neighbors models for \ce{CH4} at $\phi = 0.5$ and different pressures.}
+\end{figure}
+
+After extensive observation and a new definition of the objective, I concluded that the best model for our use case is the ANN, as it would perform much better with the new methodology devised.
+
+
+
+\newpage
+
+
+\section{Why Neural Networks Now?}
+We also found the answer to the question we had asked earlier, why was our ANN not performing as expected? As discussed above, the answer lies in the training dataset itself, we hadn't neglected the 0 entries earlier and so the training dataset was very densely populated with zeroes resulting in the very 'flat' nature of the curves we obtained earlier.
+
+Neural Networks seem to be the appropriate model of choice as when we extend the approach to a more rigorous definiton of the objective that we had layed out i.e varying \textit{p}, $\phi$ and the number of fuels, the ANN architecture could potentially still work, perhaps with more tuning.
+
+
+\subsection{Summary of Best Configurations}
+
+The table below summarizes the best-performing configurations for each dropout level, activation function, and optimizer combination based on key metrics such as Mean Squared Error (\textbf{MSE}), Root Mean Squared Error (\textbf{RMSE}), validation loss, and \textbf{R²} score.
+
+\begin{table}[h!]
+\centering
+\caption{Best Configurations for \ce{CH4} fraction, Activation, and Optimizers}
+\begin{tabular}{|c|l|l|c|c|c|c|}
+\hline
+\textbf{\ce{CH4}} & \textbf{Activation} & \textbf{Optimizer} & \textbf{MSE} & \textbf{RMSE} & \textbf{val\_loss} & \textbf{R²} \\ \hline
+0       & relu       & SGD       & 0.080952   & 0.284520  & 0.180012    & 0.988472   \\ \hline
+0.2     & leaky\_relu & SGD       & 0.066103   & 0.257105  & 0.096906    & 0.992117   \\ \hline
+0.4     & elu        & SGD       & 0.060700   & 0.246374  & 0.101666    & 0.993044   \\ \hline
+0.8     & selu       & RMSprop   & 0.020965   & 0.144794  & 4.970879    & 0.997478   \\ \hline
+0.4     & softplus   & SGD       & 0.031026   & 0.176143  & 0.054062    & 0.996445   \\ \hline
+0.6     & swish      & SGD       & 0.029462   & 0.171646  & 0.623092    & 0.996667   \\ \hline
+0.8     & gelu       & RMSprop   & 0.084660   & 0.290963  & 3.927773    & 0.989814   \\ \hline
+1    & leaky\_relu   & RMSprop   & 0.391455	& 0.625664	& 2.103178	& 0.918333	\\ \hline
+\end{tabular}
+\label{tab:best_configurations}
+\end{table}
+\subsection{Sample Plots Obtained}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{elu_sgd_04.png}
+        \caption{ELU with SGD at x=0.2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{gelu_sgd_06.png}
+        \caption{GELU with SGD, x=0.2}
+    \end{subfigure}
+    % \caption{Comparison of architectures with different configurations (1)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{leaky_rms_1.png}
+        \caption{Leaky ReLU with RMSProp, x=0.2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{leaky_sgd_02.png}
+        \caption{Leaky ReLU with SGD, x=0.2}
+    \end{subfigure}
+    % \caption{Comparison of architectures with different configurations (2)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{relu_sgd_0.png}
+        \caption{ReLU with SGD, x=0.2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{selu_rms_08.png}
+        \caption{SELU with RMSProp, x=0.2}
+    \end{subfigure}
+    % \caption{Comparison of architectures with different configurations (3)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{selu_rms_04.png}
+        \caption{SELU with RMSProp, x=0.2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{softplus_sgd_04.png}
+        \caption{Softplus with SGD, x=0.2}
+    \end{subfigure}
+    % \caption{Comparison of architectures with different configurations (4)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{swish_rms_08.png}
+        \caption{Swish with RMSProp, x=0.2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{swish_rms_06.png}
+        \caption{Swish with RMSProp, x=0.2}
+    \end{subfigure}
+    % \caption{Comparison of architectures with different configurations (5)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{swish_sgd_06.png}
+        \caption{Swish with SGD, x=0.2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, keepaspectratio]{softplus_rms_08.png}
+        \caption{Softplus with RMSProp, x=0.2}
+    \end{subfigure}
+    
+    % \caption{Comparison of architectures with different configurations (6)}
 \end{figure}
 
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth, height=0.7\textheight, keepaspectratio]{Plots_midterm_report/GradientBoostingRegressor_CH4_EqRatio0.5_Pressure10atm_plot.png}
-    \caption{Gradient Boosting: CH4, $\phi = 0.5$, $p = 10$ atm}
-\end{figure}
 
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth, height=0.7\textheight, keepaspectratio]{Plots_midterm_report/KNeighborsRegressor_CH4_EqRatio0.5_Pressure1atm_plot.png}
-    \caption{K Neighbors: CH4, $\phi = 0.5$, $p = 1$ atm}
-\end{figure}
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth, height=0.7\textheight, keepaspectratio]{Plots_midterm_report/KNeighborsRegressor_CH4_EqRatio0.5_Pressure10atm_plot.png}
-    \caption{K Neighbors: CH4, $\phi = 0.5$, $p = 10$ atm}
-\end{figure}
-
-
-
-
-
-
-
-
-\chapter{Conclusions and Scope of Further work}
+\chapter{Conclusions and Scope of Research}
 % Content goes here
 
-While the current work has focused on predicting ignition delay times (IDT) for methane (CH\(_4\)) using various machine learning models, there are several avenues to explore in order to improve the predictive accuracy and generalizability of the models. One of the immediate next steps involves optimizing the model parameters to reduce prediction errors, especially in models like the Multi-Layer Perceptron (MLP) that have demonstrated the potential to capture complex non-linear relationships.
 
-\section{Hyperparameter Optimization}
+\begin{itemize}
+    \item \textbf{Hyperparameter Optimization}:
+    \begin{itemize}
+        \item Optimization was performed on the dropout and number of layers. Using a pseudo-randomized algorithm like simulated annealing for grid search could be useful, though computationally intensive.
+    \end{itemize}
 
-The performance of machine learning models is highly dependent on the choice of hyperparameters. To further improve the accuracy of our predictions, we plan to implement advanced hyperparameter optimization techniques such as Grid Search and Random Search. These methods allow for the systematic exploration of hyperparameter spaces to identify the optimal configurations for models like the MLP, Random Forest, and Gradient Boosting models. In particular, we will focus on tuning parameters such as the number of hidden layers, learning rate, and activation functions for the MLP model to minimize overfitting and enhance generalization. Additionally, optimization techniques like Bayesian Optimization and Genetic Algorithms could be explored to refine the model hyperparameters and expedite the search process.
+    \item \textbf{Expanding the Dataset and Fuel Mixtures}:
+    \begin{itemize}
+        \item The current model is limited to conditions with \textit{p}=1 atm \& $\phi$=0.5. Expanding the dataset to include a range of pressures and equivalence ratios would broaden the model's applicability.
+        \item Thus far, the work has been on \ce{CH4} and \ce{C3H8} mixtures with a small discrete set of \(x\) values. Incorporating fuel mixtures would require the input \( x \) to the neural network would become a set of \( n \) variables.A predefined global set of fuels could allow small modifications to the ANN architecture to handle fractions directly instead of passing them as an \( n \)-dimensional vector.
+    \end{itemize}
+  
 
-\section{Expanding the Dataset}
-
-One limitation of the current study is the relatively small dataset used for model training and evaluation. Increasing the dataset size can significantly improve model robustness and reduce overfitting. Therefore, our future efforts will include gathering larger datasets that encompass a wider range of operating conditions, such as varying pressures, temperatures, and equivalence ratios. A larger dataset will also allow for better cross-validation and testing, providing more accurate insights into model performance across different conditions.
-
-\section{Introducing Fuel Mixtures}
-
-Thus far, the focus has been exclusively on methane (CH\(_4\)), but in practical applications, fuel mixtures—such as those involving propane (C\(_3\)H\(_8\)) and methane—are common. Extending the models to predict IDT for mixtures of various hydrocarbons will be a key next step in our research. This will require not only additional data but also modifications to the models to handle the non-linearities and complexities introduced by multi-component fuel systems. For instance, fuel-specific characteristics such as flame propagation speeds and heat release rates will need to be incorporated into the models to accurately capture the combustion behavior of fuel mixtures.
-
-\section{Error Reduction and Model Selection}
-
-Before introducing mixtures, our primary objective will be to significantly reduce prediction errors in at least one model. The MLP model, given its flexibility in modeling non-linear relationships, appears to be a promising candidate for this task. However, we will remain open to alternative approaches. For instance, ensemble methods or hybrid models that combine the strengths of multiple algorithms could be explored. Reducing errors will involve a combination of better data preprocessing, hyperparameter tuning, and possibly using ensemble techniques such as stacking or blending to leverage the strengths of different models.
-
-\section{Exploration of Alternate Approaches}
-
-In line with recent advancements in combustion modeling, I will also explore alternative machine learning approaches such as Convolutional Neural Networks (CNNs) and Recurrent Neural Networks (RNNs), especially if more sequential data becomes available. Furthermore, unsupervised learning techniques could be employed to identify underlying patterns in the data, which might offer new insights into the relationships between various input features and ignition delay times. Finally, transfer learning could be investigated to leverage pre-trained models on similar tasks, potentially reducing training time and improving model performance.
-
-In summary, the next steps in our research will focus on optimizing model parameters, expanding the dataset to include fuel mixtures, and reducing prediction errors in the selected models. By exploring alternative approaches alongside refining the MLP model, we aim to develop a robust and accurate tool for predicting ignition delay times across a range of fuel compositions and conditions.
-
+    \item \textbf{Activations and Other Techniques}:
+    \begin{itemize}
+        \item Developing a custom activation function or optimizer for this specific use-case could be beneficial. 
+        \item Investigating different architectures for the ANN, and exploring convolutional neural networks (CNNs) as alternatives, could also be areas for further research.
+    \end{itemize}
+\end{itemize}
 
 
 
@@ -659,7 +812,33 @@ J. Vancoillie, L. Sileghem, S. Verhelst,
 \textit{Comparison of the Alternative Fuels Methanol, Ethanol and Methane for Passenger Cars in Relation to Energy Efficiency and CO$_2$ Emissions}. 
 Energy Policy, 48, 594--601, 2013. DOI: \href{https://doi.org/10.1016/j.enpol.2012.05.052}{10.1016/j.enpol.2012.05.052}.
 
+\bibitem{shaoanlu2017} 
+S. Lu, 
+\textit{SGD \& All: Which One Is the Best Optimizer? Dogs vs. Cats Toy Experiment}. 
+May 2017. [Online]. Available: \href{https://shaoanlu.wordpress.com/2017/05/29/sgd-all-which-one-is-the-best-optimizer-dogs-vs-cats-toy-experiment/}{shaoanlu.wordpress.com}.
+
+\bibitem{reddi2017}
+S. J. Reddi, S. Kale, S. Kumar,
+\textit{On the Convergence of Adam and Beyond}. 
+arXiv preprint, 2017. DOI: \href{https://arxiv.org/abs/1705.08292}{10.48550/arXiv.1705.08292}.
+
+\bibitem{shaoanluGithub2017}
+S. Lu, 
+\textit{Dogs vs. Cats Redux: Optimizer Experiment Notebook}, 
+GitHub Repository, May 2017. [Online]. Available: \href{https://github.com/shaoanlu/dogs-vs-cats-redux/blob/master/opt_experiment.ipynb}{github.com}.
+
+\bibitem{stackexchange2018}
+\textit{Why Not Always Use the Adam Optimization Technique?}, 
+Data Science Stack Exchange, 2018. [Online]. Available: \href{https://datascience.stackexchange.com/questions/30344/why-not-always-use-the-adam-optimization-technique}{datascience.stackexchange.com}.
+ 
+
 \end{thebibliography}
+
+
+
+
+
+
 
 
 \end{document}
