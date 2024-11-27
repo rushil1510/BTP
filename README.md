@@ -1,3 +1,6 @@
+## Results for the approach applied so far:
+
+
 | x        | activation | optimizer | MSE        | RMSE      | val_loss    | R2         | Highlight |
 |----------|------------|-----------|------------|-----------|-------------|------------|-----------|
 | 0        | relu       | Adam      | 2.941561   | 1.715098  | 4.030442    | 0.581116   |           |
